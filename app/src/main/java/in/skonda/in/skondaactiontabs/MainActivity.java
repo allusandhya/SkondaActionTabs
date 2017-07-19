@@ -1,5 +1,7 @@
 package in.skonda.in.skondaactiontabs;
 
+import android.app.Application;
+import android.content.Context;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,6 +21,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -75,17 +79,9 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.vpcontainer);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
+        TabLayout dotTabs = (TabLayout) findViewById(R.id.dotTabs);
+        dotTabs.setupWithViewPager(mViewPager, true);
+        dotTabs.setBackgroundColor(getResources().getColor(R.color.colorDark80) );
     }
 
     @Override
@@ -146,17 +142,20 @@ public class MainActivity extends AppCompatActivity {
 
 //            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             videoView.setVideoURI(VideoUrls.videos.get(getArguments().getInt(ARG_SECTION_NUMBER)));
-            videoView.seekTo(1000);
-            videoView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
+            videoView.setMediaController(new MediaController(getActivity()));
+            videoView.seekTo(100);
 
+            LinearLayout playLayout = (LinearLayout) rootView.findViewById(R.id.playLayout);
+            playLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(videoView.isPlaying()) {
+                        videoView.pause();
+                    }
+                    else
                         videoView.start();
-                    return true;
                 }
             });
-//            videoView.start();
-//            textView.setTextSize(30);
 
             return rootView;
         }
@@ -176,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
+            Log.d("skondad: ", "before getting item");
             return PlaceholderFragment.newInstance(position + 1);
         }
 
@@ -189,11 +189,11 @@ public class MainActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "SECTION 1";
+                    return "";
                 case 1:
-                    return "SECTION 2";
+                    return "";
                 case 2:
-                    return "SECTION 3";
+                    return "";
             }
             return null;
         }
